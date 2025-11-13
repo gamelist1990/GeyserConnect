@@ -6,6 +6,12 @@
 # This is loaded live so will update without a server restart
 welcome-file: welcome.txt
 
+# Language setting (language file name without .lang extension)
+# Default: en_US
+# Custom languages can be added in the lang folder
+# Example: en_US, ja_JP, es_ES, etc.
+language: en_US
+
 # Enabled hard max player limit
 # This will kick players if the server is full
 hard-player-limit: false

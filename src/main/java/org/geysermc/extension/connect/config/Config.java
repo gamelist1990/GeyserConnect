@@ -35,5 +35,6 @@ public record Config(
     @JsonProperty("hard-player-limit") boolean hardPlayerLimit,
     List<Server> servers,
     @JsonProperty("custom-servers") CustomServersSection customServers,
-    VirtualHostSection vhost) {
+    VirtualHostSection vhost,
+    String language) {
 }

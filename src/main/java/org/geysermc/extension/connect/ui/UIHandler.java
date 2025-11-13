@@ -27,6 +27,7 @@ package org.geysermc.extension.connect.ui;
 
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.geysermc.extension.connect.GeyserConnect;
+import org.geysermc.extension.connect.language.LanguageManager;
 import org.geysermc.extension.connect.utils.Server;
 import org.geysermc.extension.connect.utils.ServerCategory;
 import org.geysermc.extension.connect.utils.ServerManager;
@@ -72,19 +73,21 @@ public class UIHandler {
     }
 
     public void sendMainMenu() {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         SimpleForm.Builder mainMenu = SimpleForm.builder()
-            .title("Main Menu")
-            .button("Official Servers")
-            .button("Geyser Servers");
+            .title(lang.get("ui.title.main_menu"))
+            .button(lang.get("ui.button.official_servers"))
+            .button(lang.get("ui.button.geyser_servers"));
 
         // Add a buttons for custom servers
         if (GeyserConnect.instance().config().customServers().enabled()) {
-            mainMenu.button("Custom Servers");
-            mainMenu.button("Direct connect");
+            mainMenu.button(lang.get("ui.button.custom_servers"));
+            mainMenu.button(lang.get("ui.button.direct_connect"));
         }
 
         mainMenu
-            .button("Disconnect")
+            .button(lang.get("ui.button.disconnect"))
             .closedResultHandler(response -> {
                 sendMainMenu();
             })
@@ -120,8 +123,10 @@ public class UIHandler {
     }
 
     public void sendServersMenu(ServerCategory category) {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         SimpleForm.Builder serversMenu = SimpleForm.builder()
-            .title(category.title() + " Servers");
+            .title(lang.getMessage("ui.title.servers", category.title() + " Servers"));
 
         List<Server> servers;
         if (category == ServerCategory.CUSTOM) {
@@ -135,11 +140,11 @@ public class UIHandler {
         }
 
         if (category == ServerCategory.CUSTOM) {
-            serversMenu.button("Edit servers");
+            serversMenu.button(lang.get("ui.button.edit_servers"));
         }
 
         serversMenu
-            .button("Back")
+            .button(lang.get("ui.button.back"))
             .closedOrInvalidResultHandler(response -> {
                 sendMainMenu();
             })
@@ -165,9 +170,11 @@ public class UIHandler {
     }
 
     public void sendEditServersMenu() {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         SimpleForm.Builder editServersMenu = SimpleForm.builder()
-            .title("Edit Servers")
-            .content("Select a server to edit");
+            .title(lang.get("ui.title.edit_servers"))
+            .content(lang.get("ui.content.edit_servers"));
 
         List<Server> servers = ServerManager.getServers(session);
 
@@ -176,8 +183,8 @@ public class UIHandler {
         }
 
         editServersMenu
-            .button("Add server")
-            .button("Back")
+            .button(lang.get("ui.button.add_server"))
+            .button(lang.get("ui.button.back"))
             .closedOrInvalidResultHandler(response -> {
                 sendServersMenu(ServerCategory.CUSTOM);
             })
@@ -198,12 +205,14 @@ public class UIHandler {
     }
 
     public void sendAddServerMenu() {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         session.sendForm(CustomForm.builder()
-            .title("Add Server")
-            .input("IP", "play.cubecraft.net")
-            .input("Port", "25565", "25565")
-            .toggle("Online mode", true)
-            .toggle("Bedrock/Geyser server", false)
+            .title(lang.get("ui.title.add_server"))
+            .input(lang.get("ui.label.ip"), "play.cubecraft.net")
+            .input(lang.get("ui.label.port"), "25565", "25565")
+            .toggle(lang.get("ui.label.online_mode"), true)
+            .toggle(lang.get("ui.label.bedrock_server"), false)
             .closedOrInvalidResultHandler(response -> {
                 sendEditServersMenu();
             })
@@ -220,12 +229,14 @@ public class UIHandler {
     }
 
     public void sendServerOptionsMenu(Server server) {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         session.sendForm(SimpleForm.builder()
-            .title("Server Options")
+            .title(lang.get("ui.title.server_options"))
             .content(server.title())
-            .button("Edit server")
-            .button("Delete server")
-            .button("Back")
+            .button(lang.get("ui.button.edit_server"))
+            .button(lang.get("ui.button.delete_server"))
+            .button(lang.get("ui.button.back"))
             .closedOrInvalidResultHandler(response -> {
                 sendEditServersMenu();
             })
@@ -245,13 +256,15 @@ public class UIHandler {
     }
 
     public void sendEditServerMenu(Server server) {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         int serverIndex = ServerManager.getServerIndex(session, server);
         session.sendForm(CustomForm.builder()
-            .title("Edit Server")
-            .input("IP", server.address(), server.address())
-            .input("Port", String.valueOf(server.port()), String.valueOf(server.port()))
-            .toggle("Online mode", server.online())
-            .toggle("Bedrock/Geyser server", server.bedrock())
+            .title(lang.get("ui.title.edit_server"))
+            .input(lang.get("ui.label.ip"), server.address(), server.address())
+            .input(lang.get("ui.label.port"), String.valueOf(server.port()), String.valueOf(server.port()))
+            .toggle(lang.get("ui.label.online_mode"), server.online())
+            .toggle(lang.get("ui.label.bedrock_server"), server.bedrock())
             .closedOrInvalidResultHandler(response -> {
                 sendServerOptionsMenu(server);
             })
@@ -268,11 +281,13 @@ public class UIHandler {
     }
 
     public void sendDeleteServerMenu(Server server) {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         session.sendForm(ModalForm.builder()
-            .title("Delete Server")
-            .content("Are you sure you want to delete " + server.title() + "?")
-            .button1("Yes")
-            .button2("No")
+            .title(lang.get("ui.title.delete_server"))
+            .content(lang.getMessage("ui.content.delete_server", server.title()))
+            .button1(lang.get("ui.button.yes"))
+            .button2(lang.get("ui.button.no"))
             .closedOrInvalidResultHandler(response -> {
                 sendServerOptionsMenu(server);
             })
@@ -285,12 +300,14 @@ public class UIHandler {
     }
 
     public void sendDirectConnectMenu() {
+        LanguageManager lang = GeyserConnect.instance().languageManager();
+        
         session.sendForm(CustomForm.builder()
-            .title("Direct Connect")
-            .input("IP", "play.cubecraft.net")
-            .input("Port", "25565", "25565")
-            .toggle("Online mode", true)
-            .toggle("Bedrock/Geyser server", false)
+            .title(lang.get("ui.title.direct_connect"))
+            .input(lang.get("ui.label.ip"), "play.cubecraft.net")
+            .input(lang.get("ui.label.port"), "25565", "25565")
+            .toggle(lang.get("ui.label.online_mode"), true)
+            .toggle(lang.get("ui.label.bedrock_server"), false)
             .closedOrInvalidResultHandler(response -> {
                 sendMainMenu();
             })

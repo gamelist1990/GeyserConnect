@@ -29,6 +29,7 @@ import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.TransferPacket;
 import org.geysermc.extension.connect.config.Config;
 import org.geysermc.extension.connect.config.ConfigLoader;
+import org.geysermc.extension.connect.language.LanguageManager;
 import org.geysermc.extension.connect.storage.AbstractStorageManager;
 import org.geysermc.extension.connect.storage.DisabledStorageManager;
 import org.geysermc.extension.connect.utils.Utils;
@@ -55,6 +56,7 @@ public class GeyserConnect implements Extension {
     private static GeyserConnect instance;
     private Config config;
     private AbstractStorageManager storageManager;
+    private LanguageManager languageManager;
 
     public GeyserConnect() {
         instance = this;
@@ -72,6 +74,10 @@ public class GeyserConnect implements Extension {
         return storageManager;
     }
 
+    public LanguageManager languageManager() {
+        return languageManager;
+    }
+
     @Subscribe
     public void onPreInitialize(GeyserPreInitializeEvent event) {
         if (this.geyserApi().platformType() != PlatformType.STANDALONE) {
@@ -83,6 +89,10 @@ public class GeyserConnect implements Extension {
     @Subscribe
     public void onPostInitialize(GeyserPostInitializeEvent event) {
         config = ConfigLoader.load(this, GeyserConnect.class, Config.class);
+
+        // Initialize language manager
+        languageManager = new LanguageManager();
+        languageManager.loadLanguageFromConfig(config.language());
 
         if (!config.customServers().enabled()) {
             // Force the storage manager if we have it disabled
