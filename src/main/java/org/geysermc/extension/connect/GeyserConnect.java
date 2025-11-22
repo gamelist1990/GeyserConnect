@@ -131,6 +131,10 @@ public class GeyserConnect implements Extension {
     @Subscribe
     public void onSessionInitialize(SessionInitializeEvent event) {
         GeyserSession session = (GeyserSession) event.connection();
+        if (config == null) {
+            this.logger().severe("Config not loaded; skipping session initialization for safety");
+            return;
+        }
         if (config().hardPlayerLimit()) {
             if (session.getGeyser().getSessionManager().size() >= session.getGeyser().getConfig().getMaxPlayers()) {
                 session.disconnect("disconnectionScreen.serverFull");
