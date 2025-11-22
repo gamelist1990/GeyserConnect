@@ -41,7 +41,6 @@ public class PacketHandler extends UpstreamPacketHandler {
         DimensionUtils.setBedrockDimension(session, 2);
     }
 
-    @Override
     public void onDisconnect(String reason) {
         // The user has disconnected without having connected to an actual server. If they have connected to
         // a server (transfer packet or geyser proxy), then the original packet handler has been restored.
